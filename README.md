@@ -34,7 +34,49 @@ The unique identifier will be used to assign the card to a random space on the b
 The pair identifier will be assigned randomly, and the card's image will be tied to this.
 
 ## State
-
-
+The only card property which will conceivably change during a game would be the "flipped?" state. Other card properties will probably not need to be stored in a state object. \
+However, a global state object will be necessary to track the number of moves and how many cards are currently flipped.
 
 ## Algorithm
+We track the number of cards flipped.
+Cases to account for: 
+* Player clicks the same card more than once
+* Player clicks outside game area
+* Player presses the escape key
+
+```js
+const [count, setCount] = useState(0);
+const clickOnCard = (event) => {
+    if (event.target != lastCardClicked) {
+        flipCard(event.target)
+        setCount(count++)
+        } 
+    if (event.target === lastCardClicked) {
+        resetCards()
+        setCount(count--)
+        }
+    };
+
+document.addEventListener('keydown', (event) => {
+    if (event.keyCode === 27) /* keyCode 27 == Esc */ {
+        resetCards()
+    }
+});
+```
+When two cards are flipped, we compare them.
+
+```js
+const counter = () => {
+    if (flippedCards.length === 2) {
+        match()
+    }
+};
+
+const match = (flippedCards) => {
+    if (flippedCards[0][flipID] === flippedCards[1][flipID]) {
+        return "match!"
+    } else {
+        return "no match!"
+    }
+}
+```
